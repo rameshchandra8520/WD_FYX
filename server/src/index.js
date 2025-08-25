@@ -29,15 +29,20 @@ app.get('/api/health', (_, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
+console.log('Serving frontend from:', clientDistPath);
 app.use(express.static(clientDistPath));
 
-// Catch-all to serve index.html for non-API routes (Express 5-safe regex)
+// Catch-all route for React (non-API requests)
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(clientDistPath, 'index.html'));
 });
 
+// ------------------------
+// Server & DB Setup
+// ------------------------
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/weather_dashboard';
+const MONGODB_URI =
+  process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/weather_dashboard';
 
 async function start() {
   try {
@@ -45,12 +50,13 @@ async function start() {
     await mongoose.connect(MONGODB_URI);
     console.log('MongoDB connected');
   } catch (err) {
-    console.warn('MongoDB connection failed. Continuing with in-memory fallback. Error:', err.message);
+    console.warn(
+      'MongoDB connection failed. Continuing with in-memory fallback. Error:',
+      err.message
+    );
   }
 
-  app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 }
 
 start();
-
-

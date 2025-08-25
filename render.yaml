@@ -6,8 +6,7 @@ services:
     buildCommand: |
       cd client && npm ci && npm run build
       cd ../server && npm ci
-    startCommand: |
-      cd server && npm start
+    startCommand: cd server && node src/index.js
     envVars:
       - key: NODE_VERSION
         value: 20
